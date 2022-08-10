@@ -22,11 +22,10 @@ st.sidebar.header(":mailbox: Get In Touch With Me (customised-branch)!")
 
 
 contact_form = """
-<form action="https://formsubmit.co/curiousish1@gmail.com" method="POST">
-     <input type="hidden" name="_captcha" value="false">
-     <input type="text" name="name" placeholder="Your name" required>
-     <input type="email" name="email" placeholder="Your email" required>
-     <textarea name="message" placeholder="Your message here"></textarea>
+<form action="https://data.endpoint.space/cl6o3mf5j001809mbpcf1n6gg" method="POST">
+     <input type="text" name="artistName" placeholder="artist name" required>
+     <input type="email" name="email" placeholder="artistname@email.com" required>
+     <textarea name="message" placeholder="Drop a hi!"></textarea>
      <button type="submit">Send</button>
 </form>
 """

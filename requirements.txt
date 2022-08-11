@@ -1,1 +1,2 @@
-streamlit==1.11.0
+streamlit==1.11.1
+pyrebase==3.0.27

@@ -1,3 +1,4 @@
+
 import streamlit as st
 
 st.set_page_config(
@@ -17,9 +18,7 @@ if submit:
     st.session_state["my_input"] = my_input
     st.write("You have entered: ", my_input)
 
-
 st.sidebar.header(":mailbox: Get In Touch With Me (customised-branch)!")
-
 
 contact_form = """
 <form action="https://data.endpoint.space/cl6o3mf5j001809mbpcf1n6gg" target="dummyframe" method="POST">
@@ -35,7 +34,6 @@ contact_form = """
 st.sidebar.markdown(contact_form, unsafe_allow_html=True)
 
 
-
 # Use Local CSS File
 def local_css(file_name):
     with open(file_name) as f:
@@ -43,3 +41,5 @@ def local_css(file_name):
 
 
 local_css("style/styles.css")
+
+

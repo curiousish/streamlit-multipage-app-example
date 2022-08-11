@@ -22,15 +22,19 @@ st.sidebar.header(":mailbox: Get In Touch With Me (customised-branch)!")
 
 
 contact_form = """
-<form action="https://data.endpoint.space/cl6o3mf5j001809mbpcf1n6gg" method="POST">
+<form action="https://data.endpoint.space/cl6o3mf5j001809mbpcf1n6gg" target="dummyframe" method="POST">
      <input type="text" name="artistName" placeholder="artist name" required>
      <input type="email" name="email" placeholder="artistname@email.com" required>
      <textarea name="message" placeholder="Drop a hi!"></textarea>
      <button type="submit">Send</button>
 </form>
+
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 """
 
 st.sidebar.markdown(contact_form, unsafe_allow_html=True)
+
+
 
 # Use Local CSS File
 def local_css(file_name):

@@ -1,45 +1,110 @@
-
+# Modules
+import pyrebase
 import streamlit as st
+import requests
+from datetime import datetime
 
-st.set_page_config(
-    page_title="Multipage App",
-    page_icon="👋",
-)
+# Configuration Key
+firebaseConfig = {
+    'apiKey': "AIzaSyBYL_QHbdMv_Bhgf5POx4A2E-fHRndkRw8",
+    'authDomain': "splitmyaudio2.firebaseapp.com",
+    'projectId': "splitmyaudio2",
+    'databaseURL': "https://splitmyaudio2-default-rtdb.europe-west1.firebasedatabase.app/",
+    'storageBucket': "splitmyaudio2.appspot.com",
+    'messagingSenderId': "763028572860",
+    'appId': "1:763028572860:web:9bbe75d2cf5544d4791eb9",
+    'measurementId': "G-C4RS07ETKH"
+}
 
-st.title("Main Page")
-st.sidebar.success("Select a page above.")
+# Firebase Authentication
+firebase = pyrebase.initialize_app(firebaseConfig)
+auth = firebase.auth()
 
-if "my_input" not in st.session_state:
-    st.session_state["my_input"] = ""
-
-my_input = st.text_input("Input a text here", st.session_state["my_input"])
-submit = st.button("Submit")
-if submit:
-    st.session_state["my_input"] = my_input
-    st.write("You have entered: ", my_input)
-
-st.sidebar.header(":mailbox: Get In Touch With Me (customised-branch)!")
-
-contact_form = """
-<form action="https://data.endpoint.space/cl6o3mf5j001809mbpcf1n6gg" target="dummyframe" method="POST">
-     <input type="text" name="artistName" placeholder="artist name" required>
-     <input type="email" name="email" placeholder="artistname@email.com" required>
-     <textarea name="message" placeholder="Drop a hi!"></textarea>
-     <button type="submit">Send</button>
-</form>
-
-<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
-"""
-
-st.sidebar.markdown(contact_form, unsafe_allow_html=True)
+# Database
+db = firebase.database()
+storage = firebase.storage()
 
 
-# Use Local CSS File
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+def main(user: object):
+    st.write(f"You're logged in as {st.session_state['user']['email']}")
+
+    set_code(code=user['refreshToken'])
+
+    st.write("Hello World")
+    st.code(st.session_state.user)
+    st.button('Logout')
+    if st.button:
+        logout()
+        print('logout clicked')
 
 
-local_css("style/styles.css")
+def set_code(code: str):
+    st.experimental_set_query_params(code=code)
 
 
+def login_form(auth):
+    print('login form def')
+    email = st.text_input(
+        label="email", placeholder="fullname@gmail.com")
+    password = st.text_input(
+        label="password", placeholder="password", type="password")
+
+    if st.button("login"):
+        try:
+            user = auth.sign_in_with_email_and_password(email, password)
+            st.session_state['user'] = user
+            st.experimental_rerun()
+        except requests.HTTPError as exception:
+            st.write(exception)
+            st.code(st.session_state.user)
+
+
+def logout():
+    del st.session_state['user']
+    st.experimental_set_query_params(code="/logout")
+
+
+def get_user_token(auth, refreshToken: object):
+    user = auth.get_account_info(refreshToken['idToken'])
+
+    user = {
+        "email": user['users'][0]['email'],
+        "refreshToken": refreshToken['refreshToken'],
+        "idToken": refreshToken['idToken']
+    }
+
+    st.session_state['user'] = user
+
+    return user
+
+
+def refresh_session_token(auth, code: str):
+    try:
+        return auth.refresh(code)
+    except:
+        return "fail to refresh"
+
+
+# authentication
+
+if "user" not in st.session_state:
+    st.session_state['user'] = None
+
+if st.session_state['user'] is None:
+    try:
+        code = st.experimental_get_query_params()['code'][0]
+
+        refreshToken = refresh_session_token(auth=auth, code=code)
+
+        if refreshToken == 'fail to refresh':
+            raise ValueError
+
+        user = get_user_token(auth, refreshToken=refreshToken)
+
+        main(user=user)
+    except:
+        st.title("Login")
+        login_form(auth)
+
+else:
+    main(user=st.session_state['user'])

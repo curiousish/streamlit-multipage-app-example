@@ -31,7 +31,7 @@ def main(user: object):
     set_code(code=user['refreshToken'])
 
     st.write("Hello World")
-    st.code(st.session_state.user)
+    #st.code(st.session_state.user)
     st.button('Logout')
     if st.button:
         logout()
@@ -51,12 +51,13 @@ def login_form(auth):
 
     if st.button("login"):
         try:
-            user = auth.sign_in_with_email_and_password(email, password)
+            user = auth.sign_in_with_email_and_password(email.strip(), password.strip())
             st.session_state['user'] = user
             st.experimental_rerun()
+            print('login button clicked')
         except requests.HTTPError as exception:
             st.write(exception)
-            st.code(st.session_state.user)
+            #st.code(st.session_state.user)
 
 
 def logout():
@@ -89,6 +90,7 @@ def refresh_session_token(auth, code: str):
 
 if "user" not in st.session_state:
     st.session_state['user'] = None
+    st.code(st.session_state.user)
 
 if st.session_state['user'] is None:
     try:
@@ -102,9 +104,12 @@ if st.session_state['user'] is None:
         user = get_user_token(auth, refreshToken=refreshToken)
 
         main(user=user)
+
     except:
         st.title("Login")
         login_form(auth)
 
 else:
     main(user=st.session_state['user'])
+    #st.code(st.session_state.user)
+
